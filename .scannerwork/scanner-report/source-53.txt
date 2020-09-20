@@ -1,0 +1,39 @@
+import { Component, OnInit, Input } from '@angular/core';
+import { LableService } from 'src/app/services/lable.service';
+import { NoteService } from 'src/app/services/note.service';
+
+@Component({
+  selector: 'app-add-label',
+  templateUrl: './add-label.component.html',
+  styleUrls: ['./add-label.component.scss']
+})
+export class AddLabelComponent implements OnInit {
+  notes:any;
+data:any;
+  constructor(private labels:LableService,private note:NoteService) { }
+
+  ngOnInit() {
+    this.note.getNote().subscribe(
+      (response: any) => {
+        this. notes = response.data;
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  
+    
+    this.labels.getLabel().subscribe(
+      (response: any) => {
+        // console.log("response at label: ", response);
+        this.data = response.data;
+        console.log("label", this.data)
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  }
+  
+
+}

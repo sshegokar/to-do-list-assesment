@@ -1,0 +1,20 @@
+import { Injectable } from '@angular/core';
+import { HttpServiceService } from './httpService/http-service.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class LableService {
+  getLabel() {
+    return this.httpService.getLabel()
+  }
+  
+
+  constructor(private httpService: HttpServiceService) { }
+  createLable(obj){
+    const data={
+      body:obj
+    }
+    return this.httpService.createLable(data)
+  }
+}

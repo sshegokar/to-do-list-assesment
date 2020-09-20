@@ -1,0 +1,67 @@
+.searchbar{
+  background-color:rgba(255, 255, 255, .4);
+  width:700px
+  }
+  .input{
+  background-color:rgba(49, 119, 74, 0);;
+  width:88%;
+  border:none !important
+  }
+  input.input:focus{
+  outline-width: 0;
+  }
+  
+  
+  .appbar{
+  margin-top: -8px;
+  }
+  .sidenav{
+    height:100vh;
+  }
+  
+  .mat-flat-button:hover {
+    background-color: rgb(221, 218, 218);
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 30px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 30px;
+    width: 100%;
+    height: 50px;
+    }
+    .mat-flat-button:focus {
+    background-color: rgba(241, 240, 139, 0.671);
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 30px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 30px;
+    width: 100%;
+    height: 54px;
+    }
+
+    .label{
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+    .img1{
+background-color: dimgray
+} 
+.img2{
+background-color: gray;
+border-radius: 50%
+}
+.fileSelect{
+  display: none;
+  }
+  .color{
+    padding-left: -3px;
+    display: inline-block;
+    line-height: 47px;
+    vertical-align: top;
+    width: 275px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: inherit;
+    background-clip: padding-box;
+    }
+    

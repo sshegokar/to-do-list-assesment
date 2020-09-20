@@ -1,0 +1,1 @@
+s%client/src/app/component/vm-dashboard :r‘

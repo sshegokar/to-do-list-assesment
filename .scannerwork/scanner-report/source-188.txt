@@ -1,0 +1,88 @@
+'use strict';
+
+
+module.exports = function(Labels) {
+    Labels.getLabels = function (req, callback) {
+        try {
+            if (typeof req.currentUser === 'undefined') {
+                throw new Error('ID is missing');
+            }
+            console.log("fggh", req.currentUser);
+            Labels.find({ where: { userId: req.currentUser } },
+                {
+                    include: {
+                        relation: "user" // include the owner object 
+                    }
+                }
+                , function (err, data) {
+                    if (err) {
+                        callback(null, err)
+                    } else {
+                        callback(null, data);
+                    }
+                });
+
+        }
+        catch (e) {
+            console.error('Error: ', e);
+            if (e instanceof ERR_ASSERTION
+                || e instanceof RangeError
+                || e instanceof ReferenceError
+                || e instanceof SyntaxError
+                || e instanceof SystemError
+                || e instanceof TypeError) {
+                return callback('Something bad happened!');
+            } else {
+                return callback(e.message);
+            }
+        }
+    }
+   Labels.remoteMethod("getLabels", {
+        http: { path: '/getLabels', verb: 'get' },
+        'accepts': [
+            { "arg": 'req', "type": 'object', "http": { "source": 'req' } }
+        ],
+        returns: { arg: 'data', type: 'array' }
+    });  
+   Labels.updatelabel = function (data, req, cb) {
+        try {
+            if (typeof req.currentUser === 'undefined') {
+                throw new Error('ID is missing');
+            }
+            if (typeof data.noteId === 'undefined') {
+                throw new Error('Action is undefined');
+            }
+            if (typeof data.title === 'undefined') {
+                throw new Error("noteId is missing")
+            }
+            
+            var info = {
+                'noteId': data.noteId,
+                'title': data.title,
+                'description': data.description
+            }
+            if (req.currentUser != null && data.noteId === null && data.title === null) {
+
+
+                console.log("Enter details is not valid");
+                return cb(null, "Enter details is not valid")
+            }
+            else {
+                Labels.updateAll({ _id: info.noteId }, { title: info.title, description: info.description }, function (err, data) {
+                    if (err) {
+                        return cb(err)
+
+                    } else {
+
+                        return cb(null, data);
+                    }
+                });
+            }
+        } catch (e) {
+
+        }
+    }
+ 
+    
+
+};

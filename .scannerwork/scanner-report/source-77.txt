@@ -1,0 +1,31 @@
+import { Component, OnInit } from '@angular/core';
+import { LableService } from 'src/app/services/lable.service';
+
+@Component({
+  selector: 'app-get-lable',
+  templateUrl: './get-lable.component.html',
+  styleUrls: ['./get-lable.component.scss']
+})
+export class GetLableComponent implements OnInit {
+
+  constructor(private labels:LableService) { }
+  data:any[];
+
+  ngOnInit() {
+    this.labels.getLabel().subscribe(
+      (response: any) => {
+        console.log("response at label: ", response);
+
+        console.log("response=>", response.data.id);
+        this.data = response.data;
+       
+        console.log("label", this.data)
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  }
+ 
+
+}

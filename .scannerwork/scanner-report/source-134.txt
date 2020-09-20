@@ -1,0 +1,93 @@
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+//import { FormControl } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { LoginComponent } from './component/login/login.component';
+import { appMaterial } from './appMaterial';
+import { RegisterComponent } from './component/register/register.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import { ForgotPasswordComponent } from './component/forgot-password/forgot-password.component';
+import { ResetComponent } from './component/reset/reset.component';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+
+import { DashboardComponent } from './component/dashboard/dashboard.component';
+import { HttpServiceService } from './services/httpService/http-service.service';
+import { UserServiceService } from './services/user-service.service';
+import { AddNoteComponent } from './component/add-note/add-note.component';
+import { IconComponent } from './component/icon/icon.component';
+import { NoteCardComponent } from './component/note-card/note-card.component';
+import {MatDialogModule} from '@angular/material/dialog';
+import { DialogBoxComponent } from './component/dialog-box/dialog-box.component';
+import { LableDialogComponent } from './component/lable-dialog/lable-dialog.component';
+import { GetLableComponent } from './component/get-lable/get-lable.component';
+import { TrashComponent } from './component/trash/trash.component';
+import { ArchiveComponent } from './component/archive/archive.component';
+import { SearchComponent } from './component/search/search.component';
+import { ProfilePicComponent } from './component/profile-pic/profile-pic.component';
+import { ImageCropperModule } from 'ngx-image-cropper';
+import { AddLabelComponent } from './component/add-label/add-label.component';
+import { VmDashboardComponent } from './component/vm-dashboard/vm-dashboard.component';
+import { VmDialogComponent } from './component/vm-dialog/vm-dialog.component';
+import { DisplayComponent } from './component/display/display.component';
+import { EditDialogComponent } from './component/edit-dialog/edit-dialog.component';
+
+
+
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    LoginComponent,
+    RegisterComponent,
+    ForgotPasswordComponent,
+    ResetComponent,
+    DashboardComponent,
+    AddNoteComponent,
+    IconComponent,
+    NoteCardComponent,
+    DialogBoxComponent,
+    LableDialogComponent,
+    GetLableComponent,
+    TrashComponent,
+    ArchiveComponent,
+    SearchComponent,
+    ProfilePicComponent,
+    AddLabelComponent,
+    VmDashboardComponent,
+    VmDialogComponent,
+    DisplayComponent,
+    EditDialogComponent,
+    
+    
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    
+    // FormControl,
+    FormsModule,
+    MatSnackBarModule,
+    ReactiveFormsModule,
+    appMaterial,
+    BrowserAnimationsModule,
+    MatFormFieldModule,
+    HttpClientModule,
+    MatDialogModule,
+    ImageCropperModule,
+    
+  ],
+  providers: [
+    HttpServiceService,
+    UserServiceService
+
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }

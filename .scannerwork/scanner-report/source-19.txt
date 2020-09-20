@@ -1,0 +1,61 @@
+import { Injectable } from '@angular/core';
+import { HttpServiceService } from './httpService/http-service.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class NoteService {
+  
+  constructor(private httpService: HttpServiceService) { }
+  addNote(obj){
+    const data={
+      body:obj
+    }
+    return this.httpService.addNote(data)
+  }
+  getNote() {
+   
+    return this.httpService.getNote()
+   
+  }
+  updateNote(obj) {
+    const data={
+      body:obj
+    }
+    return this.httpService.updateNotes(data)
+  }
+  updateColor(obj) {
+    const data={
+      body:obj
+    }
+    return this.httpService.updateColor(data)
+  }
+  updateReminder(model: any) {
+    const data={
+      body:model
+    }
+    return this.httpService.updateReminder(data)
+  } 
+  updateTrash(model: any) {
+    const data={
+      body:model
+    }
+    return this.httpService.updateTrash(data)
+  }
+  updateArchive(model: any) {
+    const data={
+      body:model
+    }
+    return this.httpService.updateArchive(data)
+  }
+  search(value: string) {
+    const data={
+      body:value
+    }
+    return this.httpService.searchNote(data)
+  } 
+  getVM() {
+    return this.httpService.getVM()
+  }
+  
+}

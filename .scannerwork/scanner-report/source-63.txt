@@ -1,0 +1,28 @@
+import { Component, OnInit } from '@angular/core';
+import { NoteService } from 'src/app/services/note.service';
+
+@Component({
+  selector: 'app-archive',
+  templateUrl: './archive.component.html',
+  styleUrls: ['./archive.component.scss']
+})
+export class ArchiveComponent implements OnInit {
+  data: any;
+  data1: any;
+
+  constructor(private note:NoteService) { }
+
+  ngOnInit() {
+    this.note.getNote().subscribe(
+      (response: any) => {
+        console.log("response at notecard: ", response);
+        this.data = response.data;
+       // console.log("response archive component", this.data1)
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  }
+
+}

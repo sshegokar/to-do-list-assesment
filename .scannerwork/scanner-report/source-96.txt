@@ -1,0 +1,133 @@
+import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
+import { NoteService } from 'src/app/services/note.service';
+import { MatSnackBar } from '@angular/material';
+import { LableService } from 'src/app/services/lable.service';
+
+@Component({
+  selector: 'app-icon',
+  templateUrl: './icon.component.html',
+  styleUrls: ['./icon.component.scss']
+})
+export class IconComponent implements OnInit {
+
+
+
+  constructor(private note: NoteService, private snackBar: MatSnackBar,private label:LableService) { }
+  @Input() notesData: any;
+  @Output() colorChange = new EventEmitter();
+  @Output() reminderChange = new EventEmitter();
+  
+  flag =false;
+  data:any;
+ model:any;
+  arrayOfColors = [
+    [
+      { name: "white", hexcode: "#ffffff" },
+      { name: "lightGreen", hexcode: "#90ee90" },
+      { name: "purple", hexcode: "#800080" },
+      { name: "red", hexcode: "#ff0000" },
+    ],
+    [
+      { name: "Teal", hexcode: "#008080" },
+      { name: "pink", hexcode: "#ffc0cb" },
+      { name: "orange", hexcode: "#ffa500" },
+      { name: "blue", hexcode: "#0000ff" },
+    ],
+    [
+      { name: "brown", hexcode: "#a52a2a" },
+      { name: "yellow", hexcode: "#ffff00" },
+      { name: "darkBlue", hexcode: "#00008b" },
+      { name: "gray", hexcode: "#808080" }
+    ]
+  ]
+  ngOnInit() {
+    this.label.getLabel().subscribe(
+      (response: any) => {
+        // console.log("response at label: ", response);
+        this.data = response.data;
+        console.log("label", this.data)
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  
+  
+   
+  }
+  setcolors(notecolors) {
+    this.colorChange.emit(notecolors)
+
+  }
+  setTodayDate() {
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    var todayDate = mm + '-' + dd + '-' + yyyy;
+    var time = " 20:00:00";
+    todayDate = todayDate + time;
+    this.reminderChange.emit(todayDate)
+  }
+  setTomorrowDate() {
+    var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+    var day = currentDate.getDate()
+    var month = currentDate.getMonth() + 1
+    var year = currentDate.getFullYear()
+    var time = " 8:00:00"
+    var nextDate = month + "-" + day + "-" + year + time;
+    this.reminderChange.emit(nextDate)
+
+  }
+  setNextWeek() {
+    var currentDate = new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000);
+    var day = currentDate.getDate()
+    var month = currentDate.getMonth() + 1
+    var year = currentDate.getFullYear()
+    var time = " 8:00:00"
+    var nextWeek = month + "-" + day + "-" + year + time;
+    this.reminderChange.emit(nextWeek)
+  }
+
+  isTrash(){
+    this.model = {
+     isTrash: this.flag=true,
+      noteId: this.notesData
+    }
+    console.log("trash data",this.model);
+    
+    this.note.updateTrash(this.model).subscribe(
+      (response: any) => {
+        console.log("response at trash: ", response);
+
+        console.log("response=>", response);
+
+      },
+      error => {
+        console.log(error)
+      }
+    )
+
+  }
+
+  isArchive(){
+    this.model = {
+     isArchive: this.flag=true,
+      noteId: this.notesData
+    }
+    console.log("isArchive",this.model);
+    
+    this.note.updateArchive(this.model).subscribe(
+      (response: any => {
+       var data=response
+       // console.log("response=>", data);
+
+      }),
+      error => {
+        console.log(error)
+      }
+    )
+
+  }
+
+}

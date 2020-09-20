@@ -1,0 +1,188 @@
+'use strict';
+/******************************************************************************
+ *  Execution        :   1. default node         cmd> node . 
+ *  Purpose          : Edit remote API send mail and save token in redis
+ *
+ *  @file            : user.js
+ *  @overview        : implement redis cache & send mail.
+ *  @author          : Shubhangi shegokar
+ *  @version         : LoopBack 3.x
+ *  @since           : 24/04/2019
+ *
+ ******************************************************************************/
+/**
+ * require the required file
+ */
+var disableAllMethods = require('./helper').disableAllMethods;
+var redis = require('redis');
+var client = redis.createClient()
+var app = require('../../server/server')
+
+module.exports = function (User) {
+  disableAllMethods(User, ["create", "resetPassword", "login", "setPassword"]);
+
+
+  /*************************************
+   * @purpose send mail logic
+   * @param {object} data
+   * @retrun {function} cb
+   *****************************************/
+
+
+ // const config = require('../../server/config.json');
+  User.on('resetPasswordRequest', function (info, cb) {
+
+    var url = 'http://localhost:4200/reset';
+    var html = 'Click <a href="' + url + '/' +
+      info.accessToken.id + '">here</a> to reset your password';
+
+    //send mail details
+    User.app.models.Email.send({
+      to: info.email,
+      from: 'ssshegokar21@gmail.com',
+      subject: 'Password reset',
+      html: html
+    }, function (err) {
+      if (err) return console.log('> error sending password reset email');
+
+      console.log('>sending password reset email to:', info.email);
+      cb(null, "send")
+    });
+  });
+
+
+  /**********************************************
+   * @purpose logic of redis to get data and set data
+   * @param {object} data
+   * @retrun {function} cb
+   ***********************************************/
+  //edit the remote API and save the token 
+  User.afterRemote('login', function (ctx, modelInstance, next) {
+    /**
+     * @method to set the token 
+     */
+
+    // client.set(data.currentUser, data.result.id);
+    console.log("info", ctx.result.userId);
+    console.log(ctx.result);
+    var fundoouser = app.models.user;
+    console.log("data", fundoouser);
+    console.log("datadata", ctx.result.userId);
+    User.find({ where: { id: ctx.result.userId } }, function (error, data) {
+      if (error) {
+        console.log(error);
+        throw error;
+      } else {
+        console.log("result", data.result);
+        ctx.result.firstName = data[0].firstName,
+          ctx.result.lastName = data[0].lastName,
+          ctx.result.email = data[0].email
+        ctx.result.url = data[0].url
+        console.log('GET result ->' + data.toString());
+      }
+      next();
+    })
+  })
+  /**********************************************
+   * @purpose upload image with the s3 bucket
+   * @param {object} data
+   * @retrun {function} cb
+   ***********************************************/
+  /**
+   * require the required file
+   */
+  var aws = require('aws-sdk')
+  var multer = require('multer')
+  var multerS3 = require('multer-s3')
+  /**
+   * account access details
+   */
+  var s3 = new aws.S3({
+    accessKeyId: process.env.accessKeyId,
+    secretAccessKey: process.env.secretAccessKey,
+    region: 'ap-south-1'
+  })
+  /**
+   * upload details using multer 
+   * @param {object} data
+   * @retrun {function} cb
+   */
+  var upload = multer({
+    storage: multerS3({
+      s3: s3,
+      bucket: 'fundooshu',
+      acl: 'public-read',
+
+      metadata: function (req, file, cb) {
+        cb(null, { fieldName: file.fieldname });
+      },
+      key: function (req, file, cb) {
+        cb(null, Date.now().toString())
+      }
+
+    })
+  }).array('file', 12);
+  /**
+   * @purpose upload image in s3 bucket api of upload
+   * @param {object} data
+   * @retrun {function} cb
+   */
+
+  User.upload = function (req, res, location, cb) {
+    upload(req, res, function (err) {
+      console.log("url", req.files)
+      if (err) {
+        res.json(err);
+      } else {
+        var url = req.files[0].location;
+        /**
+         * @function updateAll to update the details 
+         * @param {object} data
+         * @retrun {function} cb
+         */
+        User.updateAll({ _id: req.currentUser }, { url: url }, function (err) {
+          if (err) {
+            return cb(err)
+          } else {
+            return cb(null, url);
+          }
+        });
+      }
+    })
+  };
+  User.remoteMethod('upload', {
+    http: {
+      path: '/upload',
+      verb: 'post'
+    },
+    accepts: [{
+      arg: 'req',
+      type: 'object',
+      http: {
+        source: 'req'
+      }
+    }, {
+      arg: 'res',
+      type: 'object',
+      http: {
+        source: 'res'
+      }
+    },
+    {
+      arg: 'file',
+      type: 'file',
+      http: {
+        source: 'form'
+      }
+
+    }],
+    returns: {
+      arg: 'result',
+      type: 'object'
+    }
+  });
+
+
+
+}
+

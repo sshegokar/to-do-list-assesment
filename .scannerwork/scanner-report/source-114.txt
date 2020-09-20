@@ -1,0 +1,48 @@
+import { Component, OnInit } from '@angular/core';
+import { ProfilePicComponent } from '../profile-pic/profile-pic.component';
+import { MatDialog } from '@angular/material';
+import { VmDialogComponent } from '../vm-dialog/vm-dialog.component';
+import { BehaviorSubject } from 'rxjs';
+
+@Component({
+  selector: 'app-vm-dashboard',
+  templateUrl: './vm-dashboard.component.html',
+  styleUrls: ['./vm-dashboard.component.scss']
+})
+export class VmDashboardComponent implements OnInit {
+  firstName=localStorage.getItem('firstName')
+  lastName=localStorage.getItem('lastName')
+email=localStorage.getItem('email')
+img=localStorage.getItem('url')
+  data:any;
+  color = 'blue';
+  constructor(private dialog:MatDialog) { }
+
+  ngOnInit() {
+  }
+  profileImage(event): void {
+    const dialogRef = this.dialog.open(ProfilePicComponent, {
+      width: '400px',
+      height:'400px',
+      data: event
+    });
+    dialogRef.afterClosed()
+      .subscribe(result => {
+        this.img =localStorage.getItem("url1")
+      });
+  }
+  openDialog() {
+   
+      const dialogRef = this.dialog.open(VmDialogComponent, {
+        width: '415px',
+        height: '425px',
+       
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        console.log("dialog data", this.data);
+  
+      });
+    
+  }
+
+}

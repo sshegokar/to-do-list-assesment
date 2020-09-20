@@ -1,0 +1,1 @@
+L"client/src/app/component/get-lable :MN

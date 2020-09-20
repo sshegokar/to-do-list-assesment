@@ -1,0 +1,1 @@
+M9client/src/app/component/get-lable/get-lable.component.ts 2tsX h

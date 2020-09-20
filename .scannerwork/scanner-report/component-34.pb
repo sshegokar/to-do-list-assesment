@@ -1,0 +1,1 @@
+"9client/src/app/component/note-card/note-card.component.ts 2tsXgh

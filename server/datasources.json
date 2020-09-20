@@ -1,0 +1,36 @@
+{
+  "db": {
+    "host": "localhost",
+    "port": 27017,
+    "url": "",
+    "database": "fundooNote",
+    "password": "",
+    "name": "db",
+    "user": "",
+    "connector": "mongodb",
+    "file": "fundoo.json"
+  },
+  "myEmailDataSource": {
+    "name": "myEmailDataSource",
+    "connector": "mail",
+    "transports": [
+      {
+        "type": "smtp",
+        "host": "smtp.gmail.com",
+        "secure": true,
+        "port": 465,
+        "tls": {
+          "rejectUnauthorized": true
+        },
+        "auth": {
+          "user": "ssshegokar21@gmail.com",
+          "pass": "21041996Shu@"
+        }
+      }
+    ]
+  },
+  "redisDS": {
+    "name": "redisDS",
+    "connector": "redis"
+  }
+}

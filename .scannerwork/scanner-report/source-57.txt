@@ -1,0 +1,112 @@
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { MatDialog } from '@angular/material';
+import { LableDialogComponent } from '../lable-dialog/lable-dialog.component';
+import { Router } from '@angular/router';
+import { NoteService } from 'src/app/services/note.service';
+import { DataServiceService } from 'src/app/services/data-service.service';
+import { BehaviorSubject } from 'rxjs';
+import { ProfilePicComponent } from '../profile-pic/profile-pic.component';
+
+
+
+@Component({
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss']
+})
+export class DashboardComponent implements OnInit {
+//  @Output() change =new EventEmitter()
+  data: any;
+  lableName: any;
+  value = '';
+  //email=localStorage.getItem('email')
+  firstName=localStorage.getItem('firstName')
+  lastName=localStorage.getItem('lastName')
+email=localStorage.getItem('email')
+  
+  gridView: boolean = true;
+  private messageSource = new BehaviorSubject([]);
+  currentMessage = this.messageSource.asObservable();
+  titlename: string;
+   img=localStorage.getItem('url')
+  constructor(public dialog: MatDialog, public router: Router, private note: NoteService, private view: DataServiceService) { }
+
+  ngOnInit() {
+    this.viewUpdate()
+    localStorage.getItem('url')
+    // this. profileImage(event)
+  }
+  refresh() {
+    window.location.reload();
+  }
+  profileImage(event): void {
+    const dialogRef = this.dialog.open(ProfilePicComponent, {
+      width: '400px',
+      data: event
+    });
+    dialogRef.afterClosed()
+      .subscribe(result => {
+        this.img =localStorage.getItem("url1")
+      });
+  }
+  viewUpdate() {
+    this.view.currentView.subscribe(
+      response => this.gridView = response
+    );
+  }
+  changeView() {
+    console.log("this is changeview", this.gridView);
+    this.view.changeGridView();
+    this.viewUpdate();
+  }
+
+  openDialoglabels(): void {
+    const dialogRef = this.dialog.open(LableDialogComponent, {
+      width: '250px',
+      height: '400px',
+      data: {
+        lableName: this.lableName,
+        userId: localStorage.getItem('userId'),
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log("dialog data", this.data);
+
+    });
+  }
+  notes() {
+    this.titlename = "FundooNote"
+    this.router.navigate(['dashboard', 'addNote']);
+  }
+
+  archive() {
+    this.titlename = "Archive"
+    this.router.navigate(['dashboard', 'archive']);
+  }
+  trash() {
+    this.titlename = "Trash"
+    this.router.navigate(['dashboard', 'trash']);
+  }
+
+  search() {
+    this.router.navigate(['dashboard', 'search']);
+  }
+ 
+
+
+  onEnter(value: string) {
+    this.value = value;
+    this.note.search(this.value).subscribe((searchResponse) => {
+      this.data = searchResponse['data'];
+      console.log("search response", this.data);
+      this.messageSource.next(this.data);
+      //this.dataService.changeMessage('display notes');
+      this.router.navigate(['dashboard', 'search']);
+    })
+  }
+
+  logout(){
+    localStorage.clear()
+  }
+
+}

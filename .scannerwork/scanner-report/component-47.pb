@@ -1,0 +1,1 @@
+/7client/src/app/component/register/register.component.ts 2tsX>h

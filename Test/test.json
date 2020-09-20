@@ -1,0 +1,32 @@
+        {
+            "login": {
+                "email": "bhiogadepriyanka93@gmail.com",
+                "password": "priyanka12"
+            },
+          "register": {
+                "email": "bhiogadepriyanka93@gmail.com",
+                "firstName": "priyanka",
+                "lastName": "bhiogade",
+                "username": "bhiogadepriyanka93@gmail.com",
+                "password": "priyanka12"
+            },
+            "forgot": {
+                "email": "ssshegokar21@gmail.com"
+            },
+            "reminder": {
+                "id": "5cc14bf049b2b157ceaec387",
+                "time": "05/06/2019 16:00:00"
+            },
+            "search": {
+                "search": "omjayjagdish"
+            },
+            "trash": {
+                "id": "5cc14bf049b2b157ceaec387",
+                "isTrash": true
+            },
+            "resetPassword":{
+                "newPassword":"shubh21"
+            }
+           
+
+        }

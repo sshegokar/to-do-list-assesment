@@ -1,0 +1,67 @@
+import { Component, OnInit, Input, Inject } from '@angular/core';
+import { MatDialogRef, MatDialog, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
+import { FormControl } from '@angular/forms';
+import { NoteService } from 'src/app/services/note.service';
+
+@Component({
+  selector: 'app-dialog-box',
+  templateUrl: './dialog-box.component.html',
+  styleUrls: ['./dialog-box.component.scss']
+})
+export class DialogBoxComponent implements OnInit {
+  setcolor: any;
+  setReminder: any;
+  item: any;
+
+  constructor(private note: NoteService, public dialogRef: MatDialogRef<DialogBoxComponent>,private snackBar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA) public data: any) { }
+  notes: any;
+  title = new FormControl(this.data.title)
+  description = new FormControl(this.data.description);
+  ngOnInit() {
+    
+    
+  }
+
+
+  updatNotes($event) {
+    console.log("dd",this.setReminder);
+    
+    if(this.title.value==="" ||this.description.value==="")
+    {
+    console.log("Not update");
+    
+    }else{
+      this.setcolor = $event;
+    var data = {
+      "title": this.title.value,
+      "description": this.description.value,
+      "noteId": this.data.id,
+      "color":this.setcolor,
+
+    }
+    console.log("my data==>", data);
+    this.note.updateNote(data).subscribe(
+      (response: any) => {
+        this.item=response.data;
+        console.log("update Notes response", response);
+        this.snackBar.open('Note updated', 'End Now', { duration: 3000 })
+      },
+      error => {
+        console.log(error)
+        this.snackBar.open('Null value', 'End Now', { duration: 3000 })
+      }
+    )
+  }
+}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+  
+  setReminders($event) {
+    this.setReminder = $event;
+  }
+
+}
+

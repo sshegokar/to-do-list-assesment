@@ -1,0 +1,67 @@
+import { Component, OnInit, Input } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { NoteService } from 'src/app/services/note.service';
+import { MatSnackBar } from '@angular/material';
+import { DataServiceService } from 'src/app/services/data-service.service';
+
+
+@Component({
+  selector: 'app-add-note',
+  templateUrl: './add-note.component.html',
+  styleUrls: ['./add-note.component.scss'],
+
+})
+export class AddNoteComponent implements OnInit {
+
+  data: any;
+  id: any;
+  model: any;
+  title = new FormControl()
+  description = new FormControl()
+  flag = true;
+  setcolor: any;
+  setReminder: any;
+  constructor(private note: NoteService, private snackBar: MatSnackBar,private dataServce:DataServiceService) { }
+
+  ngOnInit() {
+  }
+
+  newNote() {
+    this.flag = !this.flag;
+  }
+  next($event) {
+    this.setcolor = $event;
+    if(this.title.value==="" &&this.description.value==="" ){
+      this.snackBar.open('Details are null', 'End Now', { duration: 3000 }) 
+    }else{
+    this.model = {
+      isTrash:false,
+      isArchive:false,
+      title: this.title.value,
+      description: this.description.value,
+      color:this.setcolor,
+      userId: localStorage.getItem('userId'),
+    }
+    console.log("data", this.model);
+    this.note.addNote(this.model).subscribe(
+      (response: any) => {
+        console.log("response=>", response);
+        this.snackBar.open('Note added', 'End Now', { duration: 3000 })
+      },
+      error => {
+        console.log(error)
+        this.snackBar.open('Error in add the note', 'End Now', { duration: 3000 })
+      }
+    )
+  }
+}
+  refresh() {
+    window.location.reload();
+  }
+  setcolors($event) {
+    this.setcolor = $event;
+  }
+  setReminders($event) {
+    this.setReminder = $event;
+  }
+}

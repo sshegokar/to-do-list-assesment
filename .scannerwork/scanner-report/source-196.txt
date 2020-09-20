@@ -1,0 +1,429 @@
+'use strict';
+/******************************************************************************
+ *  Execution        :   1. default node         cmd> node . 
+ *  Purpose          : creating API for search &reminder create the note and etc.
+ *
+ *  @file            : notes.js
+ *  @overview        :creating API for search &reminder , relation mapping.
+ *  @author          : Shubhangi shegokar
+ *  @version         : LoopBack 3.x
+ *  @since           : 06/05/2019
+ *
+ ******************************************************************************/
+var redis = require('redis');
+var client = redis.createClient()
+
+module.exports = function (Notes) {
+
+    Notes.getNotes = function (req, callback) {
+        try {
+            if (typeof req.currentUser === 'undefined') {
+                throw new Error('ID is missing');
+            }
+            console.log("userId", req.currentUser);
+            Notes.find({ where: { userId: req.currentUser } },
+                {
+                    include: {
+                        relation: "user" // include the owner object 
+                    }
+                }
+                , function (err, data) {
+                    if (err) {
+                        callback(null, err)
+                    } else {
+                        callback(null, data);
+                    }
+                });
+
+        }
+        catch (e) {
+            console.error('Error: ', e);
+            if (e instanceof ERR_ASSERTION
+                || e instanceof RangeError
+                || e instanceof ReferenceError
+                || e instanceof SyntaxError
+                || e instanceof SystemError
+                || e instanceof TypeError) {
+                return callback('Something bad happened!');
+            } else {
+                return callback(e.message);
+            }
+        }
+    }
+    Notes.remoteMethod("getNotes", {
+        http: { path: '/getNotes', verb: 'get' },
+        'accepts': [
+            { "arg": 'req', "type": 'object', "http": { "source": 'req' } }
+        ],
+        returns: { arg: 'data', type: 'array' }
+    });
+    // Notes.afterRemote('getNotes', function (data, next) {
+
+
+    //     /**
+    //      * @method to set the token 
+    //      */
+    //     client.set(modelInstance.currentUser, JSON.stringify(data.result));
+
+    //     /**
+    //      * @method to get the token 
+    //      */
+    //     client.get(modelInstance.currentUser, function (error, result) {
+    //         if (error) {
+    //             console.log(error);
+    //             throw error;
+    //         }
+    //         console.log('GET result ->' + result.toString());
+    //     });
+    //     next();
+    // })
+
+    /**************************************************
+    * @purpose api for updateNotes
+    * @param {object} data
+    * @retrun {function} cb
+    **************************************************/
+    Notes.updateNotes = function (data, req, cb) {
+        try {
+            if (typeof req.currentUser === 'undefined') {
+                throw new Error('ID is missing');
+            }
+            if (typeof data.noteId === 'undefined') {
+                throw new Error('Action is undefined');
+            }
+            if (typeof data.title === 'undefined') {
+                throw new Error("noteId is missing")
+            }
+            if (typeof data.description === 'undefined') {
+                throw new Error("noteId is missing")
+            }
+            var info = {
+                'noteId': data.noteId,
+                'title': data.title,
+                'description': data.description
+            }
+            if (req.currentUser != null && data.noteId === null && data.title === null) {
+
+
+                console.log("Enter details is not valid");
+                return cb(null, "Enter details is not valid")
+            }
+            else {
+                Notes.updateAll({ _id: info.noteId }, { title: info.title, description: info.description }, function (err, data) {
+                    if (err) {
+                        return cb(err)
+
+                    } else {
+
+                        return cb(null, data);
+                    }
+                });
+            }
+        } catch (e) {
+
+        }
+    }
+
+    Notes.remoteMethod('updateNotes', {
+        http: {
+            path: '/updateNotes',
+            verb: 'post'
+        },
+        'accepts': [
+
+            { arg: 'data', type: 'object', http: { source: 'body' }, "description": 'JSON object in body ', "required": true },
+            { "arg": 'req', "type": 'object', "http": { "source": 'req' } }
+
+        ],
+        returns: {
+            arg: 'result',
+            type: 'string'
+        }
+    });
+
+    /*********************************************************
+     * @purpose api for updatecolor
+     * @param {object} data
+     * @retrun {function} cb
+     *********************************************************/
+    Notes.updateColor = function (data, req, cb) {
+        try {
+            if (typeof req.currentUser === 'undefined') {
+                throw new Error('ID is missing');
+            }
+            if (typeof data.noteId === 'undefined') {
+                throw new Error('Action is undefined');
+            }
+            if (typeof data.color === 'undefined') {
+                throw new Error("color is missing")
+            }
+            var info = {
+                'noteId': data.noteId,
+                'color': data.color,
+
+            }
+            if (req.currentUser != null && data.noteId === null && data.color === null) {
+                console.log("Enter details is not valid");
+                return cb(null, "Enter details is not valid")
+            }
+            else {
+                Notes.updateAll({ _id: info.noteId }, { color: info.color }, function (err, data) {
+                    if (err) {
+                        return cb(err)
+
+                    } else {
+
+                        return cb(null, data);
+                    }
+                });
+            }
+        } catch (e) {
+            console.error('Error: ', e);
+            if (e instanceof ERR_ASSERTION
+                || e instanceof RangeError
+                || e instanceof ReferenceError
+                || e instanceof SyntaxError
+                || e instanceof SystemError
+                || e instanceof TypeError) {
+                return cb('Something bad happened!');
+            } else {
+                return cb(e.message);
+            }
+
+        }
+    }
+
+    Notes.remoteMethod('updateColor', {
+        http: {
+            path: '/updateColor',
+            verb: 'post'
+        },
+        'accepts': [
+
+            { arg: 'data', type: 'object', http: { source: 'body' }, "description": 'JSON object in body ', "required": true },
+            { "arg": 'req', "type": 'object', "http": { "source": 'req' } }
+
+        ],
+        returns: {
+            arg: 'result',
+            type: 'string'
+        }
+    });
+    /*****************************************
+     * @purpose api for remainder
+     * @param {object} data
+     * @retrun {function} cb
+     ******************************************/
+
+    Notes.reminder = function (data, req, cb) {
+        console.log("ffgf", data);
+
+        var info = {
+            'noteId': data.noteId,
+            'reminder': data.dateTime
+        }
+        console.log("info", info);
+
+        if (req.currentUser != data.userId && data.noteId == null && data.dateTime == null) {
+
+            console.log("Enter details is not valid");
+            cb(null, "Enter details is not valid")
+        }
+        else {
+            Notes.updateAll({ _id: info.noteId }, { reminder: info.reminder }, function (err, data) {
+                if (err) {
+                    cb(err)
+
+                } else {
+
+                    cb(null, data);
+                }
+            });
+        }
+    }
+
+    Notes.remoteMethod('reminder', {
+        http: {
+            path: '/reminder',
+            verb: 'post'
+        },
+        'accepts': [
+
+            { arg: 'data', type: 'object', http: { source: 'body' }, "description": 'JSON object in body ', "required": true },
+            { "arg": 'req', "type": 'object', "http": { "source": 'req' } }
+
+        ],
+        returns: {
+            arg: 'result',
+            type: 'string'
+        }
+    });
+
+    /*****************************************************
+      * @purpose api for serach by title or description
+      ******************************************/
+    Notes.search = function (result, cb) {
+        try {
+            if (typeof result.currentUser === 'undefined') {
+                throw new Error('ID is missing');
+            }
+            if (typeof result.params.search === 'undefined') {
+                throw new Error('Search data is undefined');
+            }
+            var data = result.params.search;
+            /* case-insensitive RegExp search */
+            var pattern = new RegExp('.*' + data + '.*', "i");
+            Notes.find({ where: { userId: result.currentUser } }, { where: { or: [{ title: { like: pattern } }, { description: { like: pattern } }] } }, function (err, data) {  /* ... */
+                if (err) {
+                    cb(err);
+                } else {
+                    cb(null, data);
+                }
+            });
+        }
+
+        catch (e) {
+            console.error('Error: ', e);
+            if (
+                e instanceof RangeError
+                || e instanceof ReferenceError
+                || e instanceof SyntaxError
+                || e instanceof SystemError
+                || e instanceof TypeError) {
+                return cb('Something bad happened!');
+            } else {
+                return cb(e.message);
+            }
+
+        }
+    }
+    Notes.remoteMethod('search', {
+
+        http: { path: '/search/:search', verb: 'get' },
+        'accepts': [
+            { "arg": 'req', "type": 'object', "http": { "source": 'req' } }
+        ],
+        returns: { arg: 'data', type: 'array' }
+    });
+
+    /*****************************************
+      * @purpose api for Trash 
+      ******************************************/
+
+    Notes.trash = function (data, req, cb) {
+
+        console.log('request :', data);
+        // console.log("ghjg",req);
+
+        var responce = "Mark as deleted"
+        var info = {
+            'noteId': data.noteId,
+            'isTrash': data.isTrash
+        }
+        console.log(info);
+        if (req.currentUser == null && info.noteId == null && info.isTrash == null) {
+            console.log("Enter details is not valid");
+            cb(null, "Enter valid input")
+        }
+        else {
+            Notes.updateAll({ _id: info.noteId }, { isTrash: info.isTrash }, function (err, data) {
+
+                if (err) {
+                    cb(err)
+
+                } else {
+
+                    cb(null, responce);
+                }
+
+            });
+        }
+    }
+    /**
+     * @creating here remotemethod
+     */
+    Notes.remoteMethod(
+        'trash',
+        {
+            http: { path: '/trash', verb: 'post' },
+            'accepts': [
+
+                { arg: 'data', type: 'object', http: { source: 'body' }, "description": 'noteId type :string,isTrash type:boolean in body ', "required": true },
+                { "arg": 'req', "type": 'object', "http": { "source": 'req' } }
+
+            ],
+            returns: { arg: 'response', type: 'string' }
+        }
+    );
+
+
+    /*****************************************
+      * @purpose api for Archive
+      ******************************************/
+
+    Notes.archive = function (data, req, cb) {
+        console.log(data);
+        try {
+            if (typeof req.currentUser === 'undefined') {
+                throw new Error('ID is missing');
+            }
+            if (typeof data.isArchive === 'undefined') {
+                throw new Error('Action is undefined');
+            }
+            if (typeof data.noteId === 'undefined') {
+                throw new Error("noteId is missing")
+            }
+            console.log('request :', data, req.currentUser);
+            var responce = "Mark as Archive"
+            var info = {
+                'noteId': data.noteId,
+                'isArchive': data.isArchive
+            }
+            console.log("ghhhhh", info);
+
+            if (info.noteId === null && info.isArchive === null) {
+                console.log("Enter details is not valid");
+                cb(null, "Enter valid input")
+            }
+            else {
+                Notes.updateAll({ _id: info.noteId }, { isArchive: info.isArchive }, function (err, data) {
+
+                    if (err) {
+                        cb(err)
+
+                    } else {
+
+                        cb(null, responce);
+                    }
+
+                })
+            };
+        }
+        catch (e) {
+            console.error('Error: ', e);
+            if (
+                e instanceof RangeError
+                || e instanceof ReferenceError
+                || e instanceof SyntaxError
+                || e instanceof SystemError
+                || e instanceof TypeError) {
+                return cb('Something bad happened!');
+            } else {
+                return cb(e.message);
+            }
+        }
+    }
+    Notes.remoteMethod(
+        'archive',
+        {
+            http: { path: '/archive', verb: 'post' },
+            'accepts': [
+
+                { arg: 'data', type: 'object', http: { source: 'body' }, "description": 'noteId type :string,isArchive type:boolean in body ', "required": true },
+                { "arg": 'req', "type": 'object', "http": { "source": 'req' } }
+
+            ],
+            returns: { arg: 'response', type: 'string' }
+        }
+    );
+};

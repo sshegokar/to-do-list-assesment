@@ -1,0 +1,71 @@
+import { Component, OnInit } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material';
+import { UserServiceService } from 'src/app/services/user-service.service';
+
+@Component({
+  selector: 'app-vm-dialog',
+  templateUrl: './vm-dialog.component.html',
+  styleUrls: ['./vm-dialog.component.scss']
+})
+export class VmDialogComponent implements OnInit {
+  interests = []; mChecked; eChecked; mdbChecked; rChecked;
+  model: any;
+  data: any;
+  constructor(private snackBar: MatSnackBar, private userService: UserServiceService) { }
+  vmlabName = new FormControl('', [Validators.required])
+  vmPaltform = new FormControl('', [Validators.required])
+  ngOnInit() {
+  }
+
+  getvmName() {
+    return this.vmlabName.hasError('required') ? 'email cannot be empty' :
+      this.vmlabName.hasError('pattern') ? 'invalid email' : ''
+  }
+  getvmPaltform() {
+    return this.vmPaltform.hasError('required') ? 'email cannot be empty' :
+      this.vmPaltform.hasError('pattern') ? 'invalid email' : ''
+  }
+  onEvent(event) {
+    event.stopPropagation();
+  }
+  onCheckboxChagen(event, value) {
+    if (event.checked) {
+      this.interests.push(value);
+    }
+    if (!event.checked) {
+      let index = this.interests.indexOf(value);
+      if (index > -1) {
+        this.interests.splice(index, 1);
+      }
+    }
+  }
+    // this.interests.toString()
+    vmAddData(){
+    console.log("checkbox", this.interests.toString());
+    this.model = {
+      vmlabName: this.vmlabName.value,
+      vmPaltform: this.vmPaltform.value,
+      cloudService: this.interests.toString(),
+      userId:localStorage.getItem('userId')
+
+    }
+    console.log("data", this.model);
+
+    this.userService.vmRegister(this.model).subscribe(
+      response => {
+        this.data = response
+        console.log("data vm lab ", this.data)
+        this.snackBar.open('successfully Added data', 'End Now', { duration: 3000 })
+      },
+      error => {
+        console.log(error)
+        this.snackBar.open('Not Add anything', 'End Now', { duration: 3000 })
+      }
+
+
+    )
+    }
+  
+
+}

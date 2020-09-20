@@ -1,0 +1,41 @@
+import { Component, OnInit, Inject } from '@angular/core';
+// import { ImageCroppedEvent } from 'ngx-image-cropper';
+import { HttpServiceService } from 'src/app/services/httpService/http-service.service';
+import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
+
+@Component({
+    selector: 'app-profile-pic',
+    templateUrl: './profile-pic.component.html',
+    styleUrls: ['./profile-pic.component.scss']
+})
+export class ProfilePicComponent implements OnInit {
+
+    constructor(private httpService: HttpServiceService, public dialogRef: MatDialogRef<ProfilePicComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private snackBar: MatSnackBar) { }
+    private apiImage;
+    private croppedImage;
+    ngOnInit() {
+    }
+    imageCropped($event) {
+        this.croppedImage = $event
+    }
+    uploadpic() {
+        this.apiImage = this.croppedImage.file
+        console.log("pic", this.croppedImage.file);
+
+        const uploadData = new FormData();
+
+        uploadData.append('file', this.apiImage, this.apiImage.name);
+
+        this.httpService.postNewData(uploadData).subscribe((response: any) => {
+            this.dialogRef.close();
+            localStorage.setItem("url1", response.result);
+            console.log(response);
+            this.snackBar.open('image uploaded Successfully..', 'End now', { duration: 1000 });
+        },
+            error => {
+                console.log(error);
+                this.snackBar.open('image not uploaded', 'End now', { duration: 1000 });
+            }
+        )
+    }
+}

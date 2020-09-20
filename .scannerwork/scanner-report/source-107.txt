@@ -1,0 +1,49 @@
+import { Component, OnInit, Inject } from '@angular/core';
+import { MatDialogRef, MatSnackBar, MAT_DIALOG_DATA } from '@angular/material';
+import { FormControl } from '@angular/forms';
+import { HttpServiceService } from 'src/app/services/httpService/http-service.service';
+
+@Component({
+  selector: 'app-edit-dialog',
+  templateUrl: './edit-dialog.component.html',
+  styleUrls: ['./edit-dialog.component.scss']
+})
+export class EditDialogComponent implements OnInit {
+
+  constructor(public dialogRef: MatDialogRef<EditDialogComponent>, private snackBar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpServiceService) { }
+  vmlabName = new FormControl(this.data.vmlabName)
+  vmPaltform = new FormControl(this.data.vmPaltform);
+  ngOnInit() {
+    console.log("aaa",this.data);
+    
+  }
+  updatData() {
+    if (this.vmlabName.value === "" || this.vmPaltform.value === "") {
+      console.log("Not update");
+      this.snackBar.open('Not update', 'End Now', { duration: 3000 })
+    } else {
+
+      var data = {
+        "vmlabName": this.vmlabName.value,
+        "vmPaltform": this.vmPaltform.value,
+        "vmId": this.data.id,
+
+      }
+      console.log("vm data==>", data);
+      this.http.updateData(data).subscribe(
+        (response: any) => {
+          console.log("update  response", response);
+          this.snackBar.open('Data updated', 'End Now', { duration: 3000 })
+        },
+        error => {
+          console.log(error)
+          this.snackBar.open('Null value', 'End Now', { duration: 3000 })
+        }
+      )
+    }
+  }
+
+
+
+}

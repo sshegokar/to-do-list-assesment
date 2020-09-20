@@ -1,0 +1,1 @@
+_client/src/app/component/icon :^`

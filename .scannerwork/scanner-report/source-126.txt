@@ -1,0 +1,47 @@
+import { Component, OnInit, Inject } from '@angular/core';
+import { MatSnackBar, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { FormControl } from '@angular/forms';
+import { LableService } from 'src/app/services/lable.service';
+
+
+@Component({
+  selector: 'app-lable-dialog',
+  templateUrl: './lable-dialog.component.html',
+  styleUrls: ['./lable-dialog.component.scss']
+})
+export class LableDialogComponent implements OnInit {
+
+  constructor(public dialogRef: MatDialogRef<LableDialogComponent>,private snackBar: MatSnackBar,@Inject(MAT_DIALOG_DATA) public data: any,private lable:LableService) { }
+  notes: any;
+ 
+  lableName = new FormControl(this.data.lableName)
+  ngOnInit() {
+   
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+  lableCreate(){
+    if(this.lableName.value=="" )
+    {
+    console.log("It should not empty");
+    
+    }else{
+    var data = {
+      "lableName": this.lableName.value,
+      "userId": localStorage.getItem('userId'),
+    }
+    console.log("my data==>", data);
+    this.lable.createLable(data).subscribe(
+      (response: any) => {
+        console.log("lable created", response);
+        this.snackBar.open('Lable is created', 'End Now', { duration: 3000 })
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  }
+  }
+  
+}

@@ -1,0 +1,47 @@
+import { Component, OnInit } from '@angular/core';
+import { NoteService } from 'src/app/services/note.service';
+import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
+import { MatDialog } from '@angular/material';
+
+@Component({
+  selector: 'app-display',
+  templateUrl: './display.component.html',
+  styleUrls: ['./display.component.scss']
+})
+export class DisplayComponent implements OnInit {
+  data: any;
+  constructor(private note: NoteService, public dialog: MatDialog) { }
+
+  ngOnInit() {
+    this.note.getVM().subscribe(
+      (response: any) => {
+        console.log("response at notecard: ", response);
+        this.data = response.data;
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  }
+  openDialog(vm: any) {
+
+    const dialogRef = this.dialog.open(EditDialogComponent, {
+      data: {
+        vmlabName: vm.vmlabName,
+        vmPaltform: vm.vmPaltform,
+        cloudService: vm.cloudService,
+        id: vm.id
+      },
+      width: '415px',
+      height: '425px',
+
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log("edit dialog data", this.data);
+
+
+    }
+    )
+  }
+
+}

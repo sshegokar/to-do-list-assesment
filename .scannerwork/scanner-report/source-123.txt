@@ -1,0 +1,43 @@
+import { Component, OnInit } from '@angular/core';
+import { Validators, FormControl } from '@angular/forms';
+import { UserServiceService } from 'src/app/services/user-service.service'
+import { MatSnackBar } from '@angular/material';
+@Component({
+  selector: 'app-forgot-password',
+  templateUrl: './forgot-password.component.html',
+  styleUrls: ['./forgot-password.component.scss']
+})
+export class ForgotPasswordComponent implements OnInit {
+
+
+  constructor(private userService: UserServiceService, private snackBar: MatSnackBar) { }
+  model: any;
+  data: any;
+  email = new FormControl('', [Validators.required, Validators.email])
+  ngOnInit() {
+
+  }
+  getEmailError() {
+    return this.email.hasError('required') ? 'email cannot be empty' :
+      this.email.hasError('pattern') ? 'invalid email' : ''
+  }
+  next() {
+
+    this.model = {
+      email: this.email.value
+    }
+    console.log("data", this.model);
+
+    this.userService.forgot(this.model).subscribe(
+      (response: any) => {
+        console.log("ffgfggg=>", response);
+        // this.data = response
+        console.log("Email send succesfully", this.data)
+        this.snackBar.open('Email is send', 'End Now', { duration: 3000 })
+      },
+      error => {
+        console.log(error)
+        this.snackBar.open('Enter proper details', 'End Now', { duration: 3000 })
+      })
+  }
+}

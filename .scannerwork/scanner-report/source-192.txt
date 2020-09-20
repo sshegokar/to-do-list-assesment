@@ -1,0 +1,80 @@
+'use strict';
+var aws = require('aws-sdk')
+var multer = require('multer')
+var multerS3 = require('multer-s3')
+
+module.exports = function (Sample) {
+  var s3 = new aws.S3({
+    accessKeyId: process.env.accessKeyId,
+    secretAccessKey: process.env.secretAccessKey,
+    region: 'ap-south-1'
+  })
+  var upload = multer({
+    storage: multerS3({
+      s3: s3,
+      bucket: 'fundooshu',
+      acl: 'public-read',
+
+      metadata: function (req, file, cb) {
+        cb(null, { fieldName: file.fieldname });
+      },
+      key: function (req, file, cb) {
+        cb(null, Date.now().toString() + '.jpeg')
+      }
+
+    })
+  }).array('file', 12);
+
+  Sample.upload = function (req, res, location, cb) {
+    // console.log("request",res);
+
+    upload(req, res, function (err) {
+      console.log("hdjk", req.files[0].location)
+
+      if (err) {
+
+        res.json(err);
+      } else {
+
+        cb(null, req.files[0].location)
+      }
+    })
+
+  };
+
+  Sample.remoteMethod('upload', {
+    http: {
+      path: '/upload',
+      verb: 'post'
+    },
+    accepts: [{
+      arg: 'req',
+      type: 'object',
+      http: {
+        source: 'req'
+      }
+    }, {
+      arg: 'res',
+      type: 'object',
+      http: {
+        source: 'res'
+      }
+    },
+    {
+      arg: 'file',
+      type: 'file',
+      http: {
+        source: 'form'
+      }
+
+    }],
+    returns: {
+      arg: 'result',
+      type: 'object'
+    }
+  });
+
+
+
+
+};

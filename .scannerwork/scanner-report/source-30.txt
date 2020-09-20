@@ -1,0 +1,129 @@
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { LoginComponent } from './component/login/login.component';
+import { RegisterComponent } from './component/register/register.component';
+import { ForgotPasswordComponent } from './component/forgot-password/forgot-password.component'
+import { ResetComponent } from './component/reset/reset.component';
+import { DashboardComponent } from './component/dashboard/dashboard.component';
+import { AddNoteComponent } from './component/add-note/add-note.component';
+import { NoteCardComponent } from './component/note-card/note-card.component';
+import { DialogBoxComponent } from './component/dialog-box/dialog-box.component';
+import { LableDialogComponent } from './component/lable-dialog/lable-dialog.component';
+import { GetLableComponent } from './component/get-lable/get-lable.component';
+import { ArchiveComponent } from './component/archive/archive.component';
+import { TrashComponent } from './component/trash/trash.component';
+import { SearchComponent } from './component/search/search.component';
+import { ProfilePicComponent } from './component/profile-pic/profile-pic.component';
+import { AddLabelComponent } from './component/add-label/add-label.component';
+import { VmDashboardComponent } from './component/vm-dashboard/vm-dashboard.component';
+import { VmDialogComponent } from './component/vm-dialog/vm-dialog.component';
+import { DisplayComponent } from './component/display/display.component';
+import { EditDialogComponent } from './component/edit-dialog/edit-dialog.component';
+import { AuthguardService } from './services/authguard.service';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: DashboardComponent
+  },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthguardService] ,
+    children: [
+      {
+        path: '',
+        component: NoteCardComponent
+      },
+
+      {
+        path: 'archive',
+        component: ArchiveComponent,
+      },
+      {
+        path: 'search',
+        component: SearchComponent
+      },
+      {
+        path: 'trash',
+        component: TrashComponent
+      },
+      {
+        path: 'note',
+        component: NoteCardComponent
+      },
+      {
+        path: 'addNote',
+        component: AddNoteComponent
+      },
+
+    ]
+  },
+  {
+    path: 'login',
+    component: LoginComponent
+
+  },
+  {
+    path: 'register',
+    component: RegisterComponent
+  },
+  {
+    path: 'forgotPassword',
+    component: ForgotPasswordComponent
+  },
+  {
+    path: 'reset/:access_token',
+    component: ResetComponent
+  },
+  {
+    path: 'dashboardVM',
+    component: VmDashboardComponent
+  }
+  ,
+  {
+    path: 'display',
+    component: DisplayComponent
+  },
+
+  {
+    path: 'isArchive',
+    component: ArchiveComponent
+  },
+  {
+    path: 'dialogBox',
+    component: DialogBoxComponent
+  },
+  {
+    path: 'profile',
+    component: ProfilePicComponent
+  },
+  {
+    path: '',
+    component: LableDialogComponent
+  },
+  {
+    path: '',
+    component: GetLableComponent
+  },
+  {
+    path: '',
+    component: AddLabelComponent
+  },
+  {
+    path: 'vmDialog',
+    component: VmDialogComponent
+  },
+  {
+    path: 'editData',
+    component: EditDialogComponent
+  }
+];
+
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+
+})
+export class AppRoutingModule { }

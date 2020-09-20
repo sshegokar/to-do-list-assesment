@@ -1,0 +1,102 @@
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material';
+import { DialogBoxComponent } from '../dialog-box/dialog-box.component';
+import { NoteService } from 'src/app/services/note.service';
+import { DataServiceService } from 'src/app/services/data-service.service';
+
+@Component({
+  selector: 'app-note-card',
+  templateUrl: './note-card.component.html',
+  styleUrls: ['./note-card.component.scss']
+})
+export class NoteCardComponent implements OnInit {
+  setcolor: any;
+  gridView: boolean;
+
+  constructor(private note: NoteService, public dialog: MatDialog,private view:DataServiceService) { }
+  result: any;
+  data: any;
+  model: any;
+  ngOnInit() {
+    this.note.getNote().subscribe(
+      (response: any) => {
+        console.log("response at notecard: ", response);
+
+        this.data = response.data;
+        console.log("data after getting all cards: ", this.data);
+      },
+      error => {
+        console.log(error)
+      }
+    )
+    this.view.currentView.subscribe(
+      responce=>this.gridView=responce
+      )
+  }
+  openDialog(notes: any) {
+    const dialogRef = this.dialog.open(DialogBoxComponent,
+      {
+        data: {
+          title: notes.title,
+          description: notes.description,
+          id: notes.id,
+          color: notes.color
+        },
+        width: '600px',
+        disableClose: true,
+        
+      });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(this.data);
+    });
+  }
+  setcolors(notes: any, $event) {
+    this.setcolor = $event;
+    this.model = {
+      color: this.setcolor,
+      noteId: notes.id
+    }
+    this.note.updateColor(this.model).subscribe(
+      (response: any) => {
+        console.log("response at color: ", response);
+
+        console.log("response=>", response);
+
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  }
+
+  setReminder(notes: any, $event) {
+    this.setReminder = $event;
+    this.model = {
+      dateTime: this.setReminder,
+      noteId: notes.id
+    }
+    this.note.updateReminder(this.model).subscribe(
+      (response: any) => {
+        console.log("response at reminder: ", response);
+
+        console.log("response=>", response);
+
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  }
+
+
+
+
+  
+
+}
+  
+  
+
+
+
+

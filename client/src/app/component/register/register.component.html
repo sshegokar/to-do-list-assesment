@@ -1,0 +1,70 @@
+<div fxFlex="auto" fxFlex.gt-sm="70">
+  <mat-card class="card">
+    <mat-card-subtitle>
+      <h2>Create your Fundoo Account </h2>
+    </mat-card-subtitle>
+
+    <div class="register" fxLayout="row" fxLayoutGap="5%" fxLayout.xs="column">
+
+      <mat-form-field appearance="outline" style="height:53px">
+
+        <mat-label>First Name</mat-label>
+        <mat-error *ngIf='firstName.Invalid'>{{getNameError()}}</mat-error>
+        <input matInput placeholder="First Name" [(formControl)]="firstName">
+
+      </mat-form-field>
+      <div fxLayoutGap="5%" fxLayout.xs="column">
+        <mat-form-field appearance="outline">
+          <mat-label>Last Name</mat-label>
+          <mat-error *ngIf='firstName.Invalid'>{{getNameError()}}</mat-error>
+          <input matInput placeholder="Last Name" [(formControl)]="lastName">
+
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row" fxLayoutGap="5%" fxLayout.xs="column" style="width:151%">
+
+      <mat-form-field appearance="outline" class="userName">
+
+        <mat-label aria-autocomplete="off">Your email address</mat-label>
+        <mat-error *ngIf='email.Invalid'>{{getEmailError()}}</mat-error>
+        <input matInput placeholder="your email address" [(formControl)]="email">
+
+      </mat-form-field>
+    </div>
+
+    <div fxLayout="row" fxLayoutGap="5%" fxLayout.xs="column">
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <mat-error *ngIf='password.Invalid'>{{getPassError()}}</mat-error>
+        <input matInput placeholder="Password" [(formControl)]="password" [type]="!hide ? 'password' : 'text'" required>
+        <mat-icon matSuffix (click)="hide = !hide">{{!hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+
+      </mat-form-field>
+
+      <div fxLayout="row" fxLayoutGap="2%" fxLayout.xs="column">
+        <mat-form-field appearance="outline">
+          <mat-label>confirm</mat-label>
+          <mat-error *ngIf='password.Invalid'>{{getPassError()}}</mat-error>
+          <input matInput placeholder="confirm" [type]="!hide ? 'password' : 'text'" required>
+          <mat-icon matSuffix (click)="hide = !hide">{{!hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+
+        </mat-form-field>
+        <div class="material-icons" fxLayoutGap="5%" fxLayout.xs="column">
+
+        </div>
+      </div>
+    </div>
+    <p>Use 8 or more characters with a mix of letters, numbers &symbols</p>
+    <div class="href" fxLayoutGap="5%" fxLayout.xs="column">
+      <a routerLink="/login">
+        <p></p>
+        <p>Sign in instead</p>
+      </a></div>
+
+    <div class="button" fxLayoutGap="5%" fxLayout.xs="column">
+      <button mat-raised-button color="primary" (click)=next()>sign up</button>
+
+    </div>
+  </mat-card>
+</div>
